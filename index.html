@@ -9,23 +9,18 @@
         /* Estilos Globais - Tema Escuro Suave */
         /* ----------------------- */
         :root {
-            --bg-color: #12182B; /* Azul noite profundo */
+            --bg-color: #12182B;
             --panel-bg: rgba(30, 38, 68, 0.8);
-            
-            /* Paleta de cores da UI */
-            --primary-accent: #4dd0e1;      /* Ciano suave */
-            --secondary-accent: #ba68c8;    /* Roxo suave */
+            --primary-accent: #4dd0e1;
+            --secondary-accent: #ba68c8;
+            --sphere-positive-glow: #66bb6a;
+            --sphere-positive-fill: #388e3c;
+            --sphere-negative-glow: #ef5350;
+            --sphere-negative-fill: #c62828;
+            --sphere-neutral-glow: #90a4ae;
+            --sphere-neutral-fill: #546e7a;
             --text-color: #e0e0e0;
             --border-color: rgba(77, 208, 225, 0.2);
-
-            /* NOVAS CORES ESPECÍFICAS PARA AS ESFERAS */
-            --sphere-positive-glow: #66bb6a; /* Verde Suave */
-            --sphere-positive-fill: #388e3c; /* Verde Escuro */
-            --sphere-negative-glow: #ef5350; /* Vermelho Suave */
-            --sphere-negative-fill: #c62828; /* Vermelho Escuro */
-            --sphere-neutral-glow: #90a4ae;  /* Cinza-Azulado */
-            --sphere-neutral-fill: #546e7a;  /* Cinza-Azulado Escuro */
-
             --font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
             --border-radius: 10px;
             --transition-duration: 0.3s;
@@ -45,16 +40,14 @@
             flex-direction: column;
             min-height: 100vh;
             overflow-x: hidden;
-            background-image: 
+            background-image:
                 radial-gradient(ellipse at center, rgba(77, 208, 225, 0.08) 0%, transparent 70%),
-                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
             background-size: cover, 30px 30px, 30px 30px;
         }
 
-        /* ----------------------- */
-        /* Layout Principal */
-        /* ----------------------- */
+        /* Layout Principal e Componentes */
         header {
             text-align: center;
             padding: 25px;
@@ -100,9 +93,6 @@
             overflow: hidden;
         }
 
-        /* ----------------------- */
-        /* Controles e Componentes */
-        /* ----------------------- */
         h2 {
             color: var(--primary-accent);
             margin-bottom: 20px;
@@ -117,7 +107,6 @@
             margin-bottom: 6px;
             font-size: 1rem;
             font-weight: 500;
-            color: var(--text-color);
         }
 
         input[type="number"] {
@@ -142,7 +131,7 @@
             padding: 15px;
             font-size: 1.2rem;
             font-weight: bold;
-            color: #ffffff; 
+            color: #ffffff;
             background: linear-gradient(45deg, var(--primary-accent), var(--secondary-accent));
             border: none;
             border-radius: 6px;
@@ -155,10 +144,8 @@
             transform: translateY(-2px);
             box-shadow: 0 0 15px var(--primary-accent);
         }
-        
-        /* ----------------------- */
+
         /* Simulação e SVG */
-        /* ----------------------- */
         .sphere {
             stroke-width: 1.5;
             transition: r 0.5s ease, fill 0.5s ease, cx 0.5s ease, cy 0.5s ease, filter 0.5s ease;
@@ -192,21 +179,21 @@
 
         .charge-label {
             font-family: var(--font-family);
-            fill: #000;
+            fill: #fff; /* Texto branco para melhor leitura sobre as esferas */
             font-size: 1rem;
             font-weight: bold;
             text-anchor: middle;
-            transition: x 0.5s ease, y 0.5s ease;
+            paint-order: stroke;
+            stroke: rgba(0,0,0,0.7);
+            stroke-width: 2px;
+            stroke-linejoin: round;
         }
-        
-        /* ----------------------- */
+
         /* Responsividade */
-        /* ----------------------- */
         @media (max-width: 900px) {
             .main-container { flex-direction: column; }
             .controls-panel { width: 100%; margin-bottom: 25px; }
         }
-
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
@@ -300,7 +287,7 @@
                 return num.toFixed(2);
             };
 
-            const updateVisualization = (r1_cm, q1_uC, r2_cm, q2_uC) => {
+            const updateVisualization = (r1_cm, q1_uC, r2_cm, q2_uC, shouldAnimateLabels = false, initialQ1, initialQ2) => {
                 const svgRect = elements.svg.getBoundingClientRect();
                 const svgWidth = svgRect.width;
                 const svgHeight = svgRect.height;
@@ -323,46 +310,48 @@
                 elements.sphere2.className.baseVal = `sphere ${getChargeClass(q2_uC)}`;
                 elements.charge1Label.setAttribute('x', cx1);
                 elements.charge1Label.setAttribute('y', cy);
-                elements.charge1Label.textContent = `${formatNumber(q1_uC)} µC`;
                 elements.charge2Label.setAttribute('x', cx2);
                 elements.charge2Label.setAttribute('y', cy);
-                elements.charge2Label.textContent = `${formatNumber(q2_uC)} µC`;
+                
+                if (shouldAnimateLabels) {
+                    animateNumber(elements.charge1Label, initialQ1, q1_uC, 800);
+                    animateNumber(elements.charge2Label, initialQ2, q2_uC, 800);
+                } else {
+                    elements.charge1Label.textContent = `${formatNumber(q1_uC)} µC`;
+                    elements.charge2Label.textContent = `${formatNumber(q2_uC)} µC`;
+                }
             };
+            
+            // NOVA FUNÇÃO PARA ANIMAR NÚMEROS
+            function animateNumber(element, start, end, duration) {
+                let startTime = null;
+                const step = (currentTime) => {
+                    if (!startTime) startTime = currentTime;
+                    const progress = Math.min((currentTime - startTime) / duration, 1);
+                    const easedProgress = progress * (2 - progress); // easeOutQuad
+                    const currentValue = start + (end - start) * easedProgress;
+                    element.textContent = `${formatNumber(currentValue)} µC`;
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    }
+                };
+                window.requestAnimationFrame(step);
+            }
 
             const animateElectronTransfer = (fromSphere, toSphere, chargeDifference) => {
                 const numParticles = Math.min(60, Math.ceil(Math.abs(chargeDifference) * 2.5));
-
                 for (let i = 0; i < numParticles; i++) {
                     const electron = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
                     electron.setAttribute('class', 'electron');
-                    
-                    const startX = parseFloat(fromSphere.getAttribute('cx'));
-                    const startY = parseFloat(fromSphere.getAttribute('cy'));
-                    const endX = parseFloat(toSphere.getAttribute('cx'));
-                    const endY = parseFloat(toSphere.getAttribute('cy'));
-
-                    const midX = (startX + endX) / 2;
-                    const midY = (startY + endY) / 2;
-                    const randomOffset = (Math.random() - 0.5) * 120;
-                    const controlX = midX + randomOffset;
-                    const controlY = midY - randomOffset;
-
+                    const startX = parseFloat(fromSphere.getAttribute('cx')), startY = parseFloat(fromSphere.getAttribute('cy'));
+                    const endX = parseFloat(toSphere.getAttribute('cx')), endY = parseFloat(toSphere.getAttribute('cy'));
+                    const midX = (startX + endX) / 2, midY = (startY + endY) / 2;
+                    const randomOffset = (Math.random() - 0.5) * 120, controlX = midX + randomOffset, controlY = midY - randomOffset;
                     const pathData = `M${startX},${startY} Q${controlX},${controlY} ${endX},${endY}`;
-
                     electron.style.offsetPath = `path("${pathData}")`;
                     elements.electronContainer.appendChild(electron);
-
-                    const duration = 800 + Math.random() * 400;
-                    const delay = Math.random() * 200;
-
-                    electron.animate([
-                        { offsetDistance: '0%', opacity: 1 },
-                        { offsetDistance: '100%', opacity: 0 }
-                    ], {
-                        duration: duration,
-                        delay: delay,
-                        easing: 'ease-in'
-                    }).onfinish = () => electron.remove();
+                    const duration = 800 + Math.random() * 400, delay = Math.random() * 200;
+                    electron.animate([{ offsetDistance: '0%', opacity: 1 }, { offsetDistance: '100%', opacity: 0 }], { duration, delay, easing: 'ease-in' }).onfinish = () => electron.remove();
                 }
             };
             
@@ -386,7 +375,9 @@
                 }
 
                 setTimeout(() => {
-                    updateVisualization(r1_cm, q1_final_uC, r2_cm, q2_final_uC);
+                    // Chama a visualização final, ativando a animação dos números
+                    updateVisualization(r1_cm, q1_final_uC, r2_cm, q2_final_uC, true, q1_uC, q2_uC);
+
                     elements.finalCharge1Out.innerHTML = `<strong>Q'₁:</strong> ${formatNumber(q1_final_uC)} µC`;
                     elements.finalCharge2Out.innerHTML = `<strong>Q'₂:</strong> ${formatNumber(q2_final_uC)} µC`;
                     elements.finalPotentialOut.innerHTML = `<strong>V:</strong> ${formatNumber(V_final)} Volts`;
