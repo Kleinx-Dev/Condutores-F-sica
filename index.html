@@ -3,30 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulação de Equilíbrio Eletrostático - Grupo B - 3B - 2025</title>
+    <title>Simulação de Equilíbrio Eletrostático</title>
     <style>
         /* ----------------------- */
-        /* Estilos Globais - Tema Acadêmico */
+        /* Estilos Globais - Tema Escuro Suave */
         /* ----------------------- */
         :root {
-            /* Nova Paleta de Cores */
-            --bg-color: #f8f9fa;             /* Fundo off-white limpo */
-            --panel-bg: #ffffff;           /* Painéis brancos */
-            --primary-accent: #3f51b5;     /* Azul Índigo (Acadêmico) */
-            --secondary-accent: #ff7043;   /* Laranja Coral (Descontraído) */
-            --text-color: #343a40;         /* Texto cinza escuro */
-            --border-color: #dee2e6;       /* Borda cinza clara */
-
-            /* Cores das Esferas (Verde/Vermelho) */
-            --sphere-positive-glow: #4caf50; /* Verde */
-            --sphere-positive-fill: #2e7d32; /* Verde Escuro */
-            --sphere-negative-glow: #f44336; /* Vermelho */
-            --sphere-negative-fill: #c62828; /* Vermelho Escuro */
-            --sphere-neutral-glow: #90a4ae;  /* Cinza-Azulado */
-            --sphere-neutral-fill: #546e7a;  /* Cinza-Azulado Escuro */
-
+            --bg-color: #12182B;
+            --panel-bg: rgba(30, 38, 68, 0.8);
+            --primary-accent: #4dd0e1;
+            --secondary-accent: #ba68c8;
+            --sphere-positive-glow: #66bb6a;
+            --sphere-positive-fill: #388e3c;
+            --sphere-negative-glow: #ef5350;
+            --sphere-negative-fill: #c62828;
+            --sphere-neutral-glow: #90a4ae;
+            --sphere-neutral-fill: #546e7a;
+            --text-color: #e0e0e0;
+            --border-color: rgba(77, 208, 225, 0.2);
             --font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
-            --border-radius: 8px;
+            --border-radius: 10px;
             --transition-duration: 0.3s;
         }
 
@@ -44,15 +40,18 @@
             flex-direction: column;
             min-height: 100vh;
             overflow-x: hidden;
+            background-image:
+                radial-gradient(ellipse at center, rgba(77, 208, 225, 0.08) 0%, transparent 70%),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: cover, 30px 30px, 30px 30px;
         }
 
-        /* ----------------------- */
-        /* Layout Principal */
-        /* ----------------------- */
+        /* Layout Principal e Componentes */
         header {
             text-align: center;
             padding: 25px;
-            background-color: var(--panel-bg);
+            background-color: transparent;
             border-bottom: 1px solid var(--border-color);
         }
 
@@ -75,7 +74,8 @@
             padding: 30px;
             border-radius: var(--border-radius);
             border: 1px solid var(--border-color);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
         }
 
         .controls-panel {
@@ -93,15 +93,13 @@
             overflow: hidden;
         }
 
-        /* ----------------------- */
-        /* Controles e Componentes */
-        /* ----------------------- */
         h2 {
             color: var(--primary-accent);
             margin-bottom: 20px;
             font-size: 1.6rem;
             border-bottom: 2px solid var(--primary-accent);
             padding-bottom: 8px;
+            text-shadow: 0 0 5px var(--primary-accent);
         }
 
         label {
@@ -114,7 +112,7 @@
         input[type="number"] {
             width: 100%;
             padding: 10px;
-            background-color: #fdfdfd;
+            background-color: rgba(18, 24, 43, 0.8);
             border: 1px solid var(--border-color);
             border-radius: 6px;
             color: var(--text-color);
@@ -125,7 +123,7 @@
         input:focus {
             outline: none;
             border-color: var(--primary-accent);
-            box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
+            box-shadow: 0 0 8px var(--primary-accent);
         }
 
         .calculate-btn {
@@ -134,7 +132,7 @@
             font-size: 1.2rem;
             font-weight: bold;
             color: #ffffff;
-            background: linear-gradient(45deg, var(--secondary-accent), var(--primary-accent));
+            background: linear-gradient(45deg, var(--primary-accent), var(--secondary-accent));
             border: none;
             border-radius: 6px;
             cursor: pointer;
@@ -144,12 +142,10 @@
 
         .calculate-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 0 15px var(--primary-accent);
         }
-        
-        /* ----------------------- */
+
         /* Simulação e SVG */
-        /* ----------------------- */
         .sphere {
             stroke-width: 1.5;
             transition: r 0.5s ease, fill 0.5s ease, cx 0.5s ease, cy 0.5s ease, filter 0.5s ease;
@@ -183,7 +179,7 @@
 
         .charge-label {
             font-family: var(--font-family);
-            fill: #fff;
+            fill: #fff; /* Texto branco para melhor leitura sobre as esferas */
             font-size: 1rem;
             font-weight: bold;
             text-anchor: middle;
@@ -192,15 +188,12 @@
             stroke-width: 2px;
             stroke-linejoin: round;
         }
-        
-        /* ----------------------- */
+
         /* Responsividade */
-        /* ----------------------- */
         @media (max-width: 900px) {
             .main-container { flex-direction: column; }
             .controls-panel { width: 100%; margin-bottom: 25px; }
         }
-
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
@@ -238,7 +231,7 @@
 
             <button class="calculate-btn" id="calculate-btn">Conectar e Simular</button>
 
-            <div id="error-message" style="color: #F44336; margin-top: 15px; text-align: center; font-weight: 500; height: 1.2rem;"></div>
+            <div id="error-message" style="color: #ef5350; margin-top: 15px; text-align: center; font-weight: 500; height: 1.2rem;"></div>
 
             <div class="results-panel" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
                 <h3>Estado de Equilíbrio</h3>
@@ -329,12 +322,13 @@
                 }
             };
             
+            // NOVA FUNÇÃO PARA ANIMAR NÚMEROS
             function animateNumber(element, start, end, duration) {
                 let startTime = null;
                 const step = (currentTime) => {
                     if (!startTime) startTime = currentTime;
                     const progress = Math.min((currentTime - startTime) / duration, 1);
-                    const easedProgress = progress * (2 - progress);
+                    const easedProgress = progress * (2 - progress); // easeOutQuad
                     const currentValue = start + (end - start) * easedProgress;
                     element.textContent = `${formatNumber(currentValue)} µC`;
                     if (progress < 1) {
@@ -381,7 +375,9 @@
                 }
 
                 setTimeout(() => {
+                    // Chama a visualização final, ativando a animação dos números
                     updateVisualization(r1_cm, q1_final_uC, r2_cm, q2_final_uC, true, q1_uC, q2_uC);
+
                     elements.finalCharge1Out.innerHTML = `<strong>Q'₁:</strong> ${formatNumber(q1_final_uC)} µC`;
                     elements.finalCharge2Out.innerHTML = `<strong>Q'₂:</strong> ${formatNumber(q2_final_uC)} µC`;
                     elements.finalPotentialOut.innerHTML = `<strong>V:</strong> ${formatNumber(V_final)} Volts`;
