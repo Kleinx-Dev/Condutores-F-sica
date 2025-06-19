@@ -12,18 +12,20 @@
             --bg-color: #12182B; /* Azul noite profundo */
             --panel-bg: rgba(30, 38, 68, 0.8);
             
-            /* Paleta de cores suavizada */
-            --primary-accent: #4dd0e1;      /* Ciano suave (Brilho Negativo) */
-            --secondary-accent: #ba68c8;    /* Roxo suave (Brilho Positivo) */
-            --neutral-glow: #78909c;
-            
-            /* Novas cores de preenchimento correspondentes */
-            --positive-fill: #8e24aa; /* Roxo escuro */
-            --negative-fill: #0097a7; /* Ciano escuro */
-            --neutral-fill: #546e7a;  /* Cinza-azulado escuro */
-
+            /* Paleta de cores da UI */
+            --primary-accent: #4dd0e1;      /* Ciano suave */
+            --secondary-accent: #ba68c8;    /* Roxo suave */
             --text-color: #e0e0e0;
             --border-color: rgba(77, 208, 225, 0.2);
+
+            /* NOVAS CORES ESPECÍFICAS PARA AS ESFERAS */
+            --sphere-positive-glow: #66bb6a; /* Verde Suave */
+            --sphere-positive-fill: #388e3c; /* Verde Escuro */
+            --sphere-negative-glow: #ef5350; /* Vermelho Suave */
+            --sphere-negative-fill: #c62828; /* Vermelho Escuro */
+            --sphere-neutral-glow: #90a4ae;  /* Cinza-Azulado */
+            --sphere-neutral-fill: #546e7a;  /* Cinza-Azulado Escuro */
+
             --font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
             --border-radius: 10px;
             --transition-duration: 0.3s;
@@ -140,7 +142,7 @@
             padding: 15px;
             font-size: 1.2rem;
             font-weight: bold;
-            color: #ffffff; /* Alterado para branco para melhor contraste */
+            color: #ffffff; 
             background: linear-gradient(45deg, var(--primary-accent), var(--secondary-accent));
             border: none;
             border-radius: 6px;
@@ -163,21 +165,21 @@
         }
 
         .sphere.positive {
-            fill: var(--positive-fill);
-            stroke: var(--secondary-accent);
-            filter: drop-shadow(0 0 10px var(--secondary-accent));
+            fill: var(--sphere-positive-fill);
+            stroke: var(--sphere-positive-glow);
+            filter: drop-shadow(0 0 10px var(--sphere-positive-glow));
         }
 
         .sphere.negative {
-            fill: var(--negative-fill);
-            stroke: var(--primary-accent);
-            filter: drop-shadow(0 0 10px var(--primary-accent));
+            fill: var(--sphere-negative-fill);
+            stroke: var(--sphere-negative-glow);
+            filter: drop-shadow(0 0 10px var(--sphere-negative-glow));
         }
 
         .sphere.neutral {
-            fill: var(--neutral-fill);
-            stroke: var(--neutral-glow);
-            filter: drop-shadow(0 0 10px var(--neutral-glow));
+            fill: var(--sphere-neutral-fill);
+            stroke: var(--sphere-neutral-glow);
+            filter: drop-shadow(0 0 10px var(--sphere-neutral-glow));
         }
 
         .electron {
@@ -242,7 +244,7 @@
 
             <button class="calculate-btn" id="calculate-btn">Conectar e Simular</button>
 
-            <div id="error-message" style="color: var(--secondary-accent); margin-top: 15px; text-align: center; font-weight: 500; height: 1.2rem;"></div>
+            <div id="error-message" style="color: #ef5350; margin-top: 15px; text-align: center; font-weight: 500; height: 1.2rem;"></div>
 
             <div class="results-panel" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
                 <h3>Estado de Equilíbrio</h3>
