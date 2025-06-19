@@ -1,22 +1,29 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ligação de Condutores Esféricos</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-
+    <title>Simulação de Equilíbrio Eletrostático</title>
     <style>
-        /* ---- CONFIGURAÇÕES GERAIS ---- */
+        /* ----------------------- */
+        /* Estilos Globais - Tema Escuro Suave */
+        /* ----------------------- */
         :root {
-            --cor-primaria: #0056b3;
-            --cor-secundaria: #4285f4;
-            --cor-fundo: #f4f7f9;
-            --cor-texto: #333;
-            --cor-branco: #ffffff;
-            --sombra-suave: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --bg-color: #12182B;
+            --panel-bg: rgba(30, 38, 68, 0.8);
+            --primary-accent: #4dd0e1;
+            --secondary-accent: #ba68c8;
+            --sphere-positive-glow: #66bb6a;
+            --sphere-positive-fill: #388e3c;
+            --sphere-negative-glow: #ef5350;
+            --sphere-negative-fill: #c62828;
+            --sphere-neutral-glow: #90a4ae;
+            --sphere-neutral-fill: #546e7a;
+            --text-color: #e0e0e0;
+            --border-color: rgba(77, 208, 225, 0.2);
+            --font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            --border-radius: 10px;
+            --transition-duration: 0.3s;
         }
 
         * {
@@ -26,315 +33,368 @@
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--cor-fundo);
-            color: var(--cor-texto);
-            line-height: 1.6;
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(ellipse at center, rgba(77, 208, 225, 0.08) 0%, transparent 70%),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: cover, 30px 30px, 30px 30px;
         }
 
-        .container {
-            max-width: 960px;
-            margin: 40px auto;
-            background-color: var(--cor-branco);
-            border-radius: 12px;
-            box-shadow: var(--sombra-suave);
-            padding: 20px 40px;
-        }
-
-        /* ---- CABEÇALHO ---- */
+        /* Layout Principal e Componentes */
         header {
             text-align: center;
-            padding-bottom: 20px;
-            margin-bottom: 40px;
-            border-bottom: 2px solid #e0e0e0;
+            padding: 25px;
+            background-color: transparent;
+            border-bottom: 1px solid var(--border-color);
         }
 
         header h1 {
-            font-size: 2.2em;
-            color: var(--cor-primaria);
-            margin-bottom: 10px;
+            font-size: 2.5rem;
+            color: var(--text-color);
+            font-weight: 600;
         }
 
-        header p {
-            font-size: 1.1em;
-            color: #666;
-        }
-
-        /* ---- SEÇÕES DE ETAPAS ---- */
-        .etapa {
-            margin-bottom: 50px;
-        }
-
-        .etapa h2 {
-            text-align: center;
-            color: var(--cor-primaria);
-            margin-bottom: 30px;
-            font-weight: 400;
-        }
-
-        .cenario {
+        .main-container {
             display: flex;
-            justify-content: space-around;
-            align-items: center;
-            min-height: 200px;
-            margin-bottom: 20px;
-        }
-
-        .esfera {
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #8ab4f8, var(--cor-secundaria));
-            box-shadow: inset -15px -15px 30px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        /* Tamanhos das esferas para demonstração */
-        #esfera1-inicial, #esfera1-conectada, #esfera1-final {
-            width: 120px;
-            height: 120px;
-        }
-        #esfera2-inicial, #esfera2-conectada, #esfera2-final {
-            width: 180px;
-            height: 180px;
-        }
-
-        .dados {
-            background-color: rgba(0, 0, 0, 0.4);
-            color: var(--cor-branco);
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 0.9em;
-        }
-
-        .dados p {
-            margin: 0;
-            line-height: 1.3;
-        }
-
-        .explicacao {
-            text-align: center;
-            max-width: 700px;
-            margin: 0 auto;
-            color: #555;
-            font-size: 1.05em;
-        }
-
-        /* ---- ELEMENTOS DA CONEXÃO ---- */
-        .cenario.conexao {
-            justify-content: center;
-        }
-
-        .fio {
-            height: 6px;
-            background-color: #bdc3c7;
-            flex-grow: 1;
-            max-width: 150px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .fio span {
-            position: absolute;
-            bottom: 15px;
-            background-color: var(--cor-fundo);
-            padding: 0 5px;
-            color: var(--cor-primaria);
-            font-weight: bold;
-        }
-
-        .seta-fluxo {
-            width: 0;
-            height: 0;
-            border-top: 10px solid transparent;
-            border-bottom: 10px solid transparent;
-            border-left: 20px solid var(--cor-primaria);
-            position: absolute;
-            animation: mover-seta 1.5s infinite ease-in-out;
-        }
-
-        @keyframes mover-seta {
-            0% { transform: translateX(-20px); opacity: 0.5; }
-            50% { transform: translateX(20px); opacity: 1; }
-            100% { transform: translateX(-20px); opacity: 0.5; }
-        }
-
-        /* ---- SEÇÃO DE PRINCÍPIOS ---- */
-        .principios {
-            background-color: #eef4ff;
+            flex: 1;
             padding: 25px;
-            border-radius: 8px;
-            margin-top: 40px;
+            gap: 25px;
         }
 
-        .principios h2 {
-            text-align: left;
+        .controls-panel,
+        .simulation-panel {
+            background-color: var(--panel-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .controls-panel {
+            width: 380px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .simulation-panel {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h2 {
+            color: var(--primary-accent);
             margin-bottom: 20px;
+            font-size: 1.6rem;
+            border-bottom: 2px solid var(--primary-accent);
+            padding-bottom: 8px;
+            text-shadow: 0 0 5px var(--primary-accent);
         }
 
-        .formula-box {
-            margin-bottom: 15px;
-        }
-
-        .formula-box p {
-            font-weight: bold;
-            color: var(--cor-primaria);
-        }
-
-        code {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: #dfe9f5;
-            padding: 5px 10px;
-            border-radius: 4px;
+        label {
             display: block;
-            margin-top: 5px;
-            font-size: 1.1em;
+            margin-bottom: 6px;
+            font-size: 1rem;
+            font-weight: 500;
         }
 
-        /* ---- RODAPÉ ---- */
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #e0e0e0;
-            color: #888;
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            background-color: rgba(18, 24, 43, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: box-shadow var(--transition-duration) ease, border-color var(--transition-duration) ease;
         }
 
-        /* ---- RESPONSIVIDADE ---- */
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px 20px;
-                margin: 20px auto;
-            }
+        input:focus {
+            outline: none;
+            border-color: var(--primary-accent);
+            box-shadow: 0 0 8px var(--primary-accent);
+        }
 
-            .cenario {
-                flex-direction: column;
-            }
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffffff;
+            background: linear-gradient(45deg, var(--primary-accent), var(--secondary-accent));
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform var(--transition-duration) ease, box-shadow var(--transition-duration) ease;
+            margin-top: auto;
+        }
 
-            .esfera {
-                margin-bottom: 20px;
-            }
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px var(--primary-accent);
+        }
 
-            .fio {
-                width: 6px;
-                height: 80px;
-                flex-grow: 0;
-                margin: 20px 0;
-            }
+        /* Simulação e SVG */
+        .sphere {
+            stroke-width: 1.5;
+            transition: r 0.5s ease, fill 0.5s ease, cx 0.5s ease, cy 0.5s ease, filter 0.5s ease;
+        }
 
-            .fio span {
-                left: 15px;
-                bottom: auto;
-                top: 50%;
-                transform: translateY(-50%);
-            }
+        .sphere.positive {
+            fill: var(--sphere-positive-fill);
+            stroke: var(--sphere-positive-glow);
+            filter: drop-shadow(0 0 10px var(--sphere-positive-glow));
+        }
 
-            @keyframes mover-seta {
-                0% { transform: translateY(-15px); opacity: 0.5; }
-                50% { transform: translateY(15px); opacity: 1; }
-                100% { transform: translateY(-15px); opacity: 0.5; }
-            }
+        .sphere.negative {
+            fill: var(--sphere-negative-fill);
+            stroke: var(--sphere-negative-glow);
+            filter: drop-shadow(0 0 10px var(--sphere-negative-glow));
+        }
 
-            .seta-fluxo {
-                border-left: 10px solid transparent;
-                border-right: 10px solid transparent;
-                border-top: 20px solid var(--cor-primaria);
-            }
+        .sphere.neutral {
+            fill: var(--sphere-neutral-fill);
+            stroke: var(--sphere-neutral-glow);
+            filter: drop-shadow(0 0 10px var(--sphere-neutral-glow));
+        }
+
+        .electron {
+            fill: var(--primary-accent);
+            r: 2.5;
+            opacity: 0;
+            pointer-events: none;
+            filter: drop-shadow(0 0 5px var(--primary-accent));
+        }
+
+        .charge-label {
+            font-family: var(--font-family);
+            fill: #fff; /* Texto branco para melhor leitura sobre as esferas */
+            font-size: 1rem;
+            font-weight: bold;
+            text-anchor: middle;
+            paint-order: stroke;
+            stroke: rgba(0,0,0,0.7);
+            stroke-width: 2px;
+            stroke-linejoin: round;
+        }
+
+        /* Responsividade */
+        @media (max-width: 900px) {
+            .main-container { flex-direction: column; }
+            .controls-panel { width: 100%; margin-bottom: 25px; }
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div class="container">
+    <header>
+        <h1>Simulação de Equilíbrio Eletrostático</h1>
+    </header>
 
-        <header>
-            <h1>Demonstração: Ligação de Condutores Esféricos</h1>
-            <p>Um conceito fundamental da eletrostática visualizado passo a passo.</p>
-        </header>
-
-        <main>
-            <section class="etapa">
-                <h2>1. Estado Inicial (Antes da Conexão)</h2>
-                <div class="cenario">
-                    <div class="esfera" id="esfera1-inicial">
-                        <div class="dados">
-                            <p><strong>Carga:</strong> +10 nC</p>
-                            <p><strong>Potencial:</strong> 1800 V</p>
-                        </div>
-                    </div>
-                    <div class="esfera" id="esfera2-inicial">
-                        <div class="dados">
-                            <p><strong>Carga:</strong> +2 nC</p>
-                            <p><strong>Potencial:</strong> 120 V</p>
-                        </div>
-                    </div>
+    <main class="main-container">
+        <aside class="controls-panel">
+            <div class="sphere-controls">
+                <h2>Esfera 1</h2>
+                <div class="input-group">
+                    <label for="radius1">Raio (cm)</label>
+                    <input type="number" id="radius1" value="20" min="1">
                 </div>
-                <p class="explicacao">
-                    As duas esferas estão isoladas. A Esfera 1, menor, possui menos carga mas um potencial elétrico muito maior devido ao seu raio reduzido.
-                </p>
-            </section>
-
-            <section class="etapa">
-                <h2>2. A Conexão (Fluxo de Carga)</h2>
-                <div class="cenario conexao">
-                    <div class="esfera" id="esfera1-conectada"></div>
-                    <div class="fio">
-                        <div class="seta-fluxo"></div>
-                        <span>Fluxo de Carga</span>
-                    </div>
-                    <div class="esfera" id="esfera2-conectada"></div>
+                <div class="input-group">
+                    <label for="charge1">Carga (µC)</label>
+                    <input type="number" id="charge1" value="50">
                 </div>
-                <p class="explicacao">
-                    Um fio condutor é utilizado para ligar as esferas. Como existe uma diferença de potencial (1800V > 120V), a carga elétrica flui da esfera de <strong>maior potencial</strong> para a de <strong>menor potencial</strong>.
-                </p>
-            </section>
+            </div>
 
-            <section class="etapa">
-                <h2>3. Estado Final (Equilíbrio Eletrostático)</h2>
-                <div class="cenario">
-                    <div class="esfera" id="esfera1-final">
-                        <div class="dados">
-                            <p><strong>Carga:</strong> +3 nC</p>
-                            <p><strong>Potencial:</strong> 540 V</p>
-                        </div>
-                    </div>
-                    <div class="esfera" id="esfera2-final">
-                        <div class="dados">
-                            <p><strong>Carga:</strong> +9 nC</p>
-                            <p><strong>Potencial:</strong> 540 V</p>
-                        </div>
-                    </div>
+            <div class="sphere-controls">
+                <h2>Esfera 2</h2>
+                <div class="input-group">
+                    <label for="radius2">Raio (cm)</label>
+                    <input type="number" id="radius2" value="30" min="1">
                 </div>
-                <p class="explicacao">
-                    O fluxo de carga cessa quando o potencial se torna igual em todo o sistema. A Esfera 2, por ter um raio maior, agora armazena a maior parte da carga total.
-                </p>
-            </section>
-
-            <section class="principios">
-                <h2>Princípios Físicos</h2>
-                <div class="formula-box">
-                    <p><strong>Conservação da Carga Total:</strong></p>
-                    <code>Q'₁ + Q'₂ = Q₁ + Q₂</code>
-                    <code>3nC + 9nC = 10nC + 2nC = 12nC</code>
+                <div class="input-group">
+                    <label for="charge2">Carga (µC)</label>
+                    <input type="number" id="charge2" value="-20">
                 </div>
-                <div class="formula-box">
-                    <p><strong>Igualdade do Potencial Final:</strong></p>
-                    <code>V'_final = k * (Q_total / R_total)</code>
-                    <code>V'_final = 540V</code>
-                </div>
-            </section>
+            </div>
 
-        </main>
+            <button class="calculate-btn" id="calculate-btn">Conectar e Simular</button>
 
-        <footer>
-            <p>Simulação Visual Estática - Apenas HTML & CSS</p>
-        </footer>
+            <div id="error-message" style="color: #ef5350; margin-top: 15px; text-align: center; font-weight: 500; height: 1.2rem;"></div>
 
-    </div>
+            <div class="results-panel" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                <h3>Estado de Equilíbrio</h3>
+                <div class="result-item" id="final-charge1-result"><strong>Q'₁:</strong> -- µC</div>
+                <div class="result-item" id="final-charge2-result"><strong>Q'₂:</strong> -- µC</div>
+                <div class="result-item" id="final-potential-result"><strong>V:</strong> -- Volts</div>
+            </div>
+        </aside>
 
+        <section class="simulation-panel">
+            <svg id="simulation-svg" width="100%" height="100%">
+                <g id="electron-container"></g>
+                <circle id="sphere1-svg" class="sphere" />
+                <circle id="sphere2-svg" class="sphere" />
+                <text id="charge1-label" class="charge-label" dy=".3em"></text>
+                <text id="charge2-label" class="charge-label" dy=".3em"></text>
+            </svg>
+        </section>
+    </main>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const k = 8.99e9;
+            const elements = {
+                radius1In: document.getElementById('radius1'),
+                charge1In: document.getElementById('charge1'),
+                radius2In: document.getElementById('radius2'),
+                charge2In: document.getElementById('charge2'),
+                calculateBtn: document.getElementById('calculate-btn'),
+                errorMessage: document.getElementById('error-message'),
+                finalCharge1Out: document.getElementById('final-charge1-result'),
+                finalCharge2Out: document.getElementById('final-charge2-result'),
+                finalPotentialOut: document.getElementById('final-potential-result'),
+                svg: document.getElementById('simulation-svg'),
+                sphere1: document.getElementById('sphere1-svg'),
+                sphere2: document.getElementById('sphere2-svg'),
+                charge1Label: document.getElementById('charge1-label'),
+                charge2Label: document.getElementById('charge2-label'),
+                electronContainer: document.getElementById('electron-container'),
+            };
+
+            const getChargeClass = (charge) => {
+                if (charge > 0.001) return 'positive';
+                if (charge < -0.001) return 'negative';
+                return 'neutral';
+            };
+
+            const formatNumber = (num) => {
+                if (num === 0) return "0.00";
+                if (Math.abs(num) > 1e5 || Math.abs(num) < 1e-2) {
+                    return num.toExponential(2);
+                }
+                return num.toFixed(2);
+            };
+
+            const updateVisualization = (r1_cm, q1_uC, r2_cm, q2_uC, shouldAnimateLabels = false, initialQ1, initialQ2) => {
+                const svgRect = elements.svg.getBoundingClientRect();
+                const svgWidth = svgRect.width;
+                const svgHeight = svgRect.height;
+                const baseRadius = 15;
+                const scaleFactor = 1.3;
+                const r1_visual = Math.max(5, baseRadius + r1_cm * scaleFactor);
+                const r2_visual = Math.max(5, baseRadius + r2_cm * scaleFactor);
+                const separation = Math.max(r1_visual + r2_visual + 60, svgWidth * 0.4);
+                const cx1 = (svgWidth / 2) - (separation / 2);
+                const cx2 = (svgWidth / 2) + (separation / 2);
+                const cy = svgHeight / 2;
+
+                elements.sphere1.setAttribute('r', r1_visual);
+                elements.sphere1.setAttribute('cx', cx1);
+                elements.sphere1.setAttribute('cy', cy);
+                elements.sphere1.className.baseVal = `sphere ${getChargeClass(q1_uC)}`;
+                elements.sphere2.setAttribute('r', r2_visual);
+                elements.sphere2.setAttribute('cx', cx2);
+                elements.sphere2.setAttribute('cy', cy);
+                elements.sphere2.className.baseVal = `sphere ${getChargeClass(q2_uC)}`;
+                elements.charge1Label.setAttribute('x', cx1);
+                elements.charge1Label.setAttribute('y', cy);
+                elements.charge2Label.setAttribute('x', cx2);
+                elements.charge2Label.setAttribute('y', cy);
+                
+                if (shouldAnimateLabels) {
+                    animateNumber(elements.charge1Label, initialQ1, q1_uC, 800);
+                    animateNumber(elements.charge2Label, initialQ2, q2_uC, 800);
+                } else {
+                    elements.charge1Label.textContent = `${formatNumber(q1_uC)} µC`;
+                    elements.charge2Label.textContent = `${formatNumber(q2_uC)} µC`;
+                }
+            };
+            
+            // NOVA FUNÇÃO PARA ANIMAR NÚMEROS
+            function animateNumber(element, start, end, duration) {
+                let startTime = null;
+                const step = (currentTime) => {
+                    if (!startTime) startTime = currentTime;
+                    const progress = Math.min((currentTime - startTime) / duration, 1);
+                    const easedProgress = progress * (2 - progress); // easeOutQuad
+                    const currentValue = start + (end - start) * easedProgress;
+                    element.textContent = `${formatNumber(currentValue)} µC`;
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    }
+                };
+                window.requestAnimationFrame(step);
+            }
+
+            const animateElectronTransfer = (fromSphere, toSphere, chargeDifference) => {
+                const numParticles = Math.min(60, Math.ceil(Math.abs(chargeDifference) * 2.5));
+                for (let i = 0; i < numParticles; i++) {
+                    const electron = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
+                    electron.setAttribute('class', 'electron');
+                    const startX = parseFloat(fromSphere.getAttribute('cx')), startY = parseFloat(fromSphere.getAttribute('cy'));
+                    const endX = parseFloat(toSphere.getAttribute('cx')), endY = parseFloat(toSphere.getAttribute('cy'));
+                    const midX = (startX + endX) / 2, midY = (startY + endY) / 2;
+                    const randomOffset = (Math.random() - 0.5) * 120, controlX = midX + randomOffset, controlY = midY - randomOffset;
+                    const pathData = `M${startX},${startY} Q${controlX},${controlY} ${endX},${endY}`;
+                    electron.style.offsetPath = `path("${pathData}")`;
+                    elements.electronContainer.appendChild(electron);
+                    const duration = 800 + Math.random() * 400, delay = Math.random() * 200;
+                    electron.animate([{ offsetDistance: '0%', opacity: 1 }, { offsetDistance: '100%', opacity: 0 }], { duration, delay, easing: 'ease-in' }).onfinish = () => electron.remove();
+                }
+            };
+            
+            const handleCalculation = () => {
+                elements.errorMessage.textContent = '';
+                elements.calculateBtn.disabled = true;
+
+                const r1_cm = parseFloat(elements.radius1In.value), q1_uC = parseFloat(elements.charge1In.value), r2_cm = parseFloat(elements.radius2In.value), q2_uC = parseFloat(elements.charge2In.value);
+                if ([r1_cm, q1_uC, r2_cm, q2_uC].some(isNaN) || r1_cm <= 0 || r2_cm <= 0) {
+                    elements.errorMessage.textContent = 'Valores inválidos. Raios devem ser positivos.';
+                    elements.calculateBtn.disabled = false; return;
+                }
+                const R1 = r1_cm / 100, Q1 = q1_uC * 1e-6, R2 = r2_cm / 100, Q2 = q2_uC * 1e-6, Qt = Q1 + Q2, R_total = R1 + R2;
+                if (R_total === 0) { elements.calculateBtn.disabled = false; return; }
+                const V_final = k * Qt / R_total, Q1_final = Qt * (R1 / R_total), Q2_final = Qt * (R2 / R_total);
+                const q1_final_uC = Q1_final * 1e6, q2_final_uC = Q2_final * 1e6;
+                const chargeDifference = q1_uC - q1_final_uC;
+                
+                if (Math.abs(chargeDifference) > 1e-9) {
+                    animateElectronTransfer(chargeDifference > 0 ? elements.sphere1 : elements.sphere2, chargeDifference > 0 ? elements.sphere2 : elements.sphere1, chargeDifference);
+                }
+
+                setTimeout(() => {
+                    // Chama a visualização final, ativando a animação dos números
+                    updateVisualization(r1_cm, q1_final_uC, r2_cm, q2_final_uC, true, q1_uC, q2_uC);
+
+                    elements.finalCharge1Out.innerHTML = `<strong>Q'₁:</strong> ${formatNumber(q1_final_uC)} µC`;
+                    elements.finalCharge2Out.innerHTML = `<strong>Q'₂:</strong> ${formatNumber(q2_final_uC)} µC`;
+                    elements.finalPotentialOut.innerHTML = `<strong>V:</strong> ${formatNumber(V_final)} Volts`;
+                    elements.calculateBtn.disabled = false;
+                }, 1200);
+            };
+
+            const handleInputChange = () => {
+                const r1 = parseFloat(elements.radius1In.value) || 0, q1 = parseFloat(elements.charge1In.value) || 0, r2 = parseFloat(elements.radius2In.value) || 0, q2 = parseFloat(elements.charge2In.value) || 0;
+                if (r1 > 0 && r2 > 0) updateVisualization(r1, q1, r2, q2);
+            };
+
+            window.addEventListener('resize', handleInputChange);
+            elements.calculateBtn.addEventListener('click', handleCalculation);
+            document.querySelectorAll('input').forEach(input => input.addEventListener('input', handleInputChange));
+            handleInputChange();
+        });
+    </script>
 </body>
 </html>
